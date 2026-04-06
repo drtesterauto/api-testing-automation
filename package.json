@@ -1,0 +1,20 @@
+{
+  "name": "api-testing-automation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+  "test": "newman run collections/API-Collection.postman_collection.json -e environments/production.postman_environment.json --reporters cli,html --reporter-html-export results/api-test-report.html",
+  "test:verbose": "newman run collections/API-Collection.postman_collection.json -e environments/production.postman_environment.json --reporters cli --verbose",
+  "test:products": "newman run collections/API-Collection.postman_collection.json -e environments/production.postman_environment.json --folder Products --reporters cli,html --reporter-html-export results/products-report.html",
+  "test:auth": "newman run collections/API-Collection.postman_collection.json -e environments/production.postman_environment.json --folder Authentication --reporters cli,html --reporter-html-export results/auth-report.html",
+  "clean": "rm -rf results/*"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "newman": "^4.6.1",
+    "newman-reporter-html": "^1.0.5"
+  }
+}

@@ -1,0 +1,685 @@
+{
+  "info": {
+    "_postman_id": "e141c711-dfd9-4ce8-aa3c-e1560bfb847a",
+    "name": "Platzi Fake API - Complete Test Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "31843219"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array with products\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "    pm.expect(data.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Products have required fields\", function () {",
+                  "    let products = pm.response.json();",
+                  "    products.forEach(product => {",
+                  "        pm.expect(product).to.have.property('id');",
+                  "        pm.expect(product).to.have.property('title');",
+                  "        pm.expect(product).to.have.property('price');",
+                  "        pm.expect(product).to.have.property('description');",
+                  "        pm.expect(product).to.have.property('images');",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/products",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get product by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is a single product object\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test(\"Product ID matches request\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data.id).to.equal(11);",
+                  "});",
+                  "",
+                  "pm.test(\"Product has all required fields\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('id');",
+                  "    pm.expect(data).to.have.property('title');",
+                  "    pm.expect(data).to.have.property('price');",
+                  "    pm.expect(data.category).to.have.property('id');",
+                  "    pm.expect(data).to.have.property('images');",
+                  "});",
+                  "",
+                  "pm.test(\"Data types are correct\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data.id).to.be.a('number');",
+                  "    pm.expect(data.title).to.be.a('string');",
+                  "    pm.expect(data.price).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/products/11",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products",
+                "11"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Products with Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Pagination limit is respected\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data.length).to.be.at.most(10);",
+                  "});",
+                  "",
+                  "pm.test(\"All items have IDs for proper pagination\", function () {",
+                  "    let data = pm.response.json();",
+                  "    data.forEach(item => {",
+                  "        pm.expect(item).to.have.property('id');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/products?offset=0&limit=10",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains created product\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('id');",
+                  "    pm.expect(data.title).to.equal('Test Product');",
+                  "    pm.expect(data.price).to.equal(99.99);",
+                  "});",
+                  "",
+                  "pm.test(\"Created product has all fields\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('id');",
+                  "    pm.expect(data).to.have.property('creationAt');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{$randomColor}}{{$randomProduct}}\",\n  \"price\": 10,\n  \"description\": \"A {{$randomCatchPhraseDescriptor}}\",\n  \"categoryId\": 1,\n  \"images\": [\"https://placehold.co/600x400\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/products/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a product",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Change title\",\n  \"price\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/products/103",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products",
+                "103"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/products/100",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "products",
+                "100"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get all cateogries",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is array with at least 4 categories\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "    pm.expect(data.length).to.be.at.least(4);",
+                  "});",
+                  "",
+                  "pm.test(\"Categories have required fields\", function () {",
+                  "    let categories = pm.response.json();",
+                  "    categories.forEach(cat => {",
+                  "        pm.expect(cat).to.have.property('id');",
+                  "        pm.expect(cat).to.have.property('name');",
+                  "        pm.expect(cat).to.have.property('image');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/categories",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Products by Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is array of products\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"All products belong to category\", function () {",
+                  "    let data = pm.response.json();",
+                  "    data.forEach(product => {",
+                  "        pm.expect(product.category.id).to.equal(2);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/categories/2/products",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "categories",
+                "2",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is array of users\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.be.an('array');",
+                  "    pm.expect(data.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Users have required fields\", function () {",
+                  "    let users = pm.response.json();",
+                  "    users.forEach(user => {",
+                  "        pm.expect(user).to.have.property('id');",
+                  "        pm.expect(user).to.have.property('email');",
+                  "        pm.expect(user).to.have.property('password');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get user by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"User ID matches request\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data.id).to.equal(1);",
+                  "});",
+                  "",
+                  "pm.test(\"User has complete profile\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('email');",
+                  "    pm.expect(data).to.have.property('name');",
+                  "    pm.expect(data).to.have.property('avatar');",
+                  "    pm.expect(data).to.have.property('role');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users/1",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "pm.test(\"New user has ID assigned\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('id');",
+                  "    pm.expect(data.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"User created with correct data\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data.email).to.equal('testuser@example.com');",
+                  "    pm.expect(data.name).to.equal('Test User');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"abc123\",\n  \"name\": \"Test User{{$randomAlphaNumeric}}\",\n  \"avatar\": \"https://example.com/avatar.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Login response has access token\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('access_token');",
+                  "    pm.expect(data.access_token).to.be.a('string');",
+                  "    pm.expect(data.access_token.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Login response has user data\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('access_token');",
+                  "    pm.expect(data).to.have.property('refresh_token');",
+                  "",
+                  "});",
+                  "",
+                  "// Save token for protected endpoints",
+                  "pm.test(\"Store access token for later use\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.environment.set('access_token', data.access_token);",
+                  "});",
+                  "",
+                  "let data = pm.response.json();",
+                  "",
+                  "// Save tokens to environment variables",
+                  "pm.environment.set(\"access_token\", data.access_token);",
+                  "pm.environment.set(\"refresh_token\", data.refresh_token);",
+                  "",
+                  "pm.test(\"Tokens exist\", function () {",
+                  "    pm.expect(data).to.have.property(\"access_token\");",
+                  "    pm.expect(data).to.have.property(\"refresh_token\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\n{\n  \"email\": \"john@mail.com\",\n  \"password\": \"changeme\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get current user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Protected endpoint returns user profile\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('id');",
+                  "    pm.expect(data).to.have.property('email');",
+                  "    pm.expect(data).to.have.property('role');",
+                  "});",
+                  "",
+                  "pm.test(\"User role is valid\", function () {",
+                  "    let data = pm.response.json();",
+                  "    pm.expect(['admin', 'customer']).to.include(data.role);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/auth/profile",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
